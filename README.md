@@ -5,7 +5,7 @@ Backend FastAPI yang membaca tabel spasial PostGIS dan menyalurkannya sebagai Ge
 ## 1. Prasyarat
 - Python 3.10 atau lebih baru
 - PostgreSQL berjalan di `localhost:5432`
-- Database `webgis2` dan ekstensi PostgreSQL sudah aktif
+- Database `webgis2` dan ekstensi PostGIS sudah aktif
 
 ## 2. Instalasi di Windows (PowerShell)
 Buka PowerShell di folder ini, lalu jalankan:
