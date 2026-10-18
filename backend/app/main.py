@@ -1,18 +1,39 @@
 
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 import httpx
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app.database import engine
+from app.services.rain_sync import sync_curah_hujan_dan_banjir, last_sync_info
+
+scheduler = AsyncIOScheduler()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Menjalankan sinkronisasi curah hujan otomatis setiap 1 jam
+    scheduler.add_job(
+        sync_curah_hujan_dan_banjir,
+        "interval",
+        hours=1,
+        id="sync_curah_hujan_job",
+        replace_existing=True,
+    )
+    scheduler.start()
+    yield
+    scheduler.shutdown()
 
 
 app = FastAPI(
     title="WebGIS2MBC",
     description="WebGIS potensi banjir dan rute evakuasi Kota Makassar",
-    version="1.2.0",
+    version="1.3.0",
+    lifespan=lifespan,
 )
 
 
@@ -287,6 +308,36 @@ def get_hujan():
             status_code=500,
             detail=f"Gagal mengambil daftar curah hujan: {str(exc)}",
         ) from exc
+
+
+# =========================================================
+# 7b. SINKRONISASI CURAH HUJAN OTOMATIS (MANUAL TRIGGER & STATUS)
+# =========================================================
+
+@app.post("/api/hujan/sync")
+def trigger_sync_hujan():
+    """
+    Memicu proses penarikan data curah hujan terkini dari API
+    dan langsung memperbarui analisis potensi banjir.
+    """
+    hasil = sync_curah_hujan_dan_banjir()
+    return hasil
+
+
+@app.get("/api/hujan/sync/status")
+def status_sync_hujan():
+    """
+    Memeriksa status sinkronisasi otomatis dan jadwal berikutnya.
+    """
+    job = scheduler.get_job("sync_curah_hujan_job")
+    next_run = job.next_run_time.isoformat() if job and job.next_run_time else None
+
+    return {
+        "scheduler_aktif": scheduler.running,
+        "jadwal_berikutnya": next_run,
+        "interval": "1 jam",
+        "terakhir": last_sync_info,
+    }
 
 
 # =========================================================
