@@ -2,7 +2,7 @@
 from pathlib import Path
 import geopandas as gpd
 
-folder = Path(r"E:\webgis2mbc\data\batas_kelurahan")
+folder = Path(r"E:\webgis2mbc\data\batas_kelurahan") #directory harus diubah
 files = list(folder.glob("*.geojson")) + list(folder.glob("*.shp"))
 
 if not files:
