@@ -2,7 +2,13 @@
 from pathlib import Path
 import geopandas as gpd
 
-folder = Path(r"E:\webgis2mbc\data\batas_kelurahan") #directory harus diubah
+# Mendapatkan akar folder repositori (naik 1 tingkat dari folder 'backend')
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+# Path universal ke folder 'batas_kelurahan'
+folder = REPO_ROOT / "data" / "batas_kelurahan"
+
+# Mengambil semua file .geojson dan .shp di dalam folder
 files = list(folder.glob("*.geojson")) + list(folder.glob("*.shp"))
 
 if not files:
