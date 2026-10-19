@@ -6,10 +6,14 @@ from sqlalchemy import text
 
 from app.database import engine
 
+# Path folder 'backend' (folder tempat skrip ini berada)
+BACKEND_DIR = Path(__file__).resolve().parent
 
-FILE_INPUT = Path(
-    r"E:\webgis2mbc\data\batas_kelurahan\kelurahan.geojson" #directory harus diubah jadi berbasis repo
-)
+# Path akar repositori (satu tingkat di atas folder 'backend')
+REPO_ROOT = BACKEND_DIR.parent
+
+# Path relatif menuju file kelurahan.geojson
+FILE_INPUT = REPO_ROOT / "data" / "batas_kelurahan" / "kelurahan.geojson"
 
 if not FILE_INPUT.exists():
     raise FileNotFoundError(
