@@ -8,7 +8,7 @@ from app.database import engine
 
 
 FILE_INPUT = Path(
-    r"E:\webgis2mbc\data\batas_kelurahan\kelurahan.geojson"
+    r"E:\webgis2mbc\data\batas_kelurahan\kelurahan.geojson" #directory harus diubah jadi berbasis repo
 )
 
 if not FILE_INPUT.exists():
