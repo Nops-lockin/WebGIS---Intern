@@ -3,7 +3,8 @@ from pathlib import Path
 import json
 import httpx
 
-folder = Path(r"E:\webgis2mbc\data\batas_kelurahan") #directory harus diubah nanti
+BASE_DIR = Path(__file__).resolve().parent
+folder = BASE_DIR / "data" / "batas_kelurahan"
 folder.mkdir(parents=True, exist_ok=True)
 
 output = folder / "kelurahan.geojson"
